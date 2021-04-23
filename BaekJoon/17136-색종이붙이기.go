@@ -1,5 +1,0 @@
-package BaekJoon
-
-func run() {
-
-}

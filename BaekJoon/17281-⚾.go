@@ -1,5 +1,3 @@
-package BaekJoon
-
 import (
 	"bufio"
 	"os"
