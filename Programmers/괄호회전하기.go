@@ -1,14 +1,4 @@
-package main
-
-import (
-	"fmt"
-)
-
-func main() {
-	s := "}}}"
-	a := solution(s)
-	fmt.Println(a)
-}
+package Programmers
 
 func solution(s string) int {
 	count := 0
