@@ -1,23 +1,16 @@
+// 12100 - 2048.go
 package main
 
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 )
 
 var reader = bufio.NewReader(os.Stdin)
 var writer = bufio.NewWriter(os.Stdout)
-
-func readStringAsArray() []string {
-	s, _ := reader.ReadString('\n')
-	temp := strings.Split(strings.TrimSpace(s), " ")
-	return temp
-}
 
 func readIntegerAsArray() []int {
 	s, _ := reader.ReadString('\n')
@@ -30,44 +23,97 @@ func readIntegerAsArray() []int {
 	return cTemp
 }
 
-func binarySearch(arr []int, find int) int {
-	s := 0
-	e := len(arr) - 1
-	var m int
-	for s <= e {
-		m = int(math.Floor(float64(s+e) / 2))
-
-		if find < arr[m] {
-			e = m - 1
-		} else if find > arr[m] {
-			s = m + 1
-		} else {
-			return m
+func top(arr [][]int) {
+	for y := 0; y < len(arr); y++ {
+		for x := 0; x < len(arr); x++ {
+			for nx := x + 1; nx < len(arr); nx++ {
+				if arr[x][y] == 0 && arr[nx][y] != 0 {
+					arr[x][y] = arr[nx][y]
+					arr[nx][y] = 0
+					x--
+					break
+				}
+				if arr[x][y] != 0 && arr[x][y] == arr[nx][y] {
+					arr[x][y] += arr[nx][y]
+					arr[nx][y] = 0
+					break
+				}
+			}
 		}
 	}
-	return -1
+}
+
+func bottom(arr [][]int) {
+	for y := 0; y < len(arr); y++ {
+		for x := len(arr) - 1; x >= 0; x-- {
+			for nx := x - 1; nx >= 0; nx-- {
+				if arr[x][y] == 0 && arr[nx][y] != 0 {
+					arr[x][y] = arr[nx][y]
+					arr[nx][y] = 0
+					x++
+					break
+				}
+				if arr[x][y] != 0 && arr[x][y] == arr[nx][y] {
+					arr[x][y] += arr[nx][y]
+					arr[nx][y] = 0
+					break
+				}
+			}
+		}
+	}
+}
+
+func right(arr [][]int) {
+	for x := 0; x < len(arr); x++ {
+		for y := 0; y < len(arr); y++ {
+			for ny := y + 1; ny < len(arr); ny++ {
+				if arr[x][y] == 0 && arr[x][ny] != 0 {
+					arr[x][y] = arr[x][ny]
+					arr[x][ny] = 0
+					y--
+					break
+				}
+				if arr[x][y] != 0 && arr[x][y] == arr[x][ny] {
+					arr[x][y] += arr[x][ny]
+					arr[x][ny] = 0
+					break
+				}
+			}
+		}
+	}
+}
+
+func left(arr [][]int) {
+	for x := 0; x < len(arr); x++ {
+		for y := len(arr); y >= 0; y-- {
+			for ny := y - 1; ny >= 0; ny-- {
+				if arr[x][y] == 0 && arr[x][ny] != 0 {
+					arr[x][y] = arr[x][ny]
+					arr[x][ny] = 0
+					y++
+					break
+				}
+				if arr[x][y] != 0 && arr[x][y] == arr[x][ny] {
+					arr[x][y] += arr[x][ny]
+					arr[x][ny] = 0
+					break
+				}
+			}
+		}
+	}
 }
 
 func main() {
 	defer writer.Flush()
 
-	strconv.Atoi(readStringAsArray()[0])
-	arr := readIntegerAsArray()
-	strconv.Atoi(readStringAsArray()[0])
-	check := readIntegerAsArray()
-
-	sort.Ints(arr)
-
-	answer := []string{}
-
-	for _, c := range check {
-		a := binarySearch(arr, c)
-		if a != -1 {
-			answer = append(answer, "1")
-		} else {
-			answer = append(answer, "0")
-		}
+	N := readIntegerAsArray()[0]
+	arr := make([][]int, N)
+	for i := 0; i < N; i++ {
+		arr[i] = readIntegerAsArray()
 	}
-
-	fmt.Fprintf(writer, "%s", strings.Join(answer, " "))
+	top(arr)
+	bottom(arr)
+	for _, v := range arr {
+		fmt.Fprintf(writer, "%v\r\n", v)
+	}
 }
