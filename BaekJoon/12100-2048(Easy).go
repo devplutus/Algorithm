@@ -1,6 +1,3 @@
-// 12100 - 2048.go
-package main
-
 import (
 	"bufio"
 	"fmt"
