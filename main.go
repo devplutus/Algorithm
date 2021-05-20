@@ -28,71 +28,59 @@ func readIntegerAsArray() []int {
 	return cTemp
 }
 
-func reverse(arr []int) []int {
-	temp := []int{}
-	for i := len(arr) - 1; i >= 0; i-- {
-		temp = append(temp, arr[i])
+func cal(x, y, operator string) int {
+	cx, _ := strconv.Atoi(x)
+	cy, _ := strconv.Atoi(y)
+
+	if operator == "S" {
+		return cx - cy
+	} else if operator == "M" {
+		return cx * cy
+	} else if operator == "U" {
+		return cx / cy
+	} else {
+		return cx + cy
 	}
-	return temp
 }
 
 func main() {
 	defer writer.Flush()
 
-	parameters := readIntegerAsArray()
-	N, M := parameters[0], parameters[1]
-	// 0 Deck, 1 Ground
-	do := [2][]int{}
-	su := [2][]int{}
-	max := N
-	if N > M {
-		max = M
-	}
+	readIntegerAsArray()
+	str := readStringAsArray()[0]
 
-	for i := 0; i < max; i++ {
-		parameters := readStringAsArray()
-		doN, _ := strconv.Atoi(parameters[0])
-		suN, _ := strconv.Atoi(parameters[1])
-		do[0] = append(do[0], doN)
-		su[0] = append(su[0], suN)
-	}
+	answer := []string{}
+	nums := [2]string{"", ""}
+	operator := []string{}
 
-	do[0] = reverse(do[0])
-	su[0] = reverse(su[0])
-
-	for i := 0; i < M; i++ {
-		// Flip
-		do[1] = append(do[1], do[0][len(do[0])-1])
-		su[1] = append(su[1], su[0][len(su[0])-1])
-		do[0] = do[0][:len(do[0])-1]
-		su[0] = su[0][:len(su[0])-1]
-		// su win
-		if do[1][len(do[1])-1] == 5 || su[1][len(su[1])-1] == 5 {
-			t := reverse(do[1])
-			su[0] = append(t, su[0]...)
-			t2 := reverse(su[1])
-			su[0] = append(t2, su[0]...)
-			su[1] = []int{}
-			do[1] = []int{}
-		} else if (len(do[1]) > 0 && len(su[1]) > 0) && do[1][len(do[1])-1]+su[1][len(su[1])-1] == 5 {
-			t := reverse(su[1])
-			do[0] = append(t, do[0]...)
-			t2 := reverse(do[1])
-			do[0] = append(t2, do[0]...)
-			su[1] = []int{}
-			do[1] = []int{}
-		}
-
-		if len(do[0]) == 0 || len(su[0]) == 0 {
-			break
+	for _, s := range str {
+		if s >= '0' && s <= '9' {
+			if len(operator) == 0 {
+				nums[0] += string(s)
+			} else {
+				nums[1] += string(s)
+			}
+		} else {
+			if nums[1] != "" && len(operator) != 0 {
+				if operator[len(operator)-1] != "C" {
+					nums[0] = strconv.Itoa(cal(nums[0], nums[1], operator[len(operator)-1]))
+					nums[1] = ""
+				}
+				if string(s) == "C" {
+					temp, _ := strconv.Atoi(nums[0])
+					answer = append(answer, strconv.Itoa(temp))
+				}
+			} else if string(s) == "C" {
+				temp, _ := strconv.Atoi(nums[0])
+				answer = append(answer, strconv.Itoa(temp))
+			}
+			operator = append(operator, string(s))
 		}
 	}
 
-	if len(do[0]) == len(su[0]) {
-		fmt.Fprintln(writer, "dosu")
-	} else if len(do[0]) > len(su[0]) || (len(do[0]) > 0 && len(su[0]) == 0) {
-		fmt.Fprintln(writer, "do")
+	if len(answer) == 0 {
+		fmt.Fprintln(writer, "NO OUTPUT")
 	} else {
-		fmt.Fprintln(writer, "su")
+		fmt.Fprintln(writer, strings.Join(answer, " "))
 	}
 }
